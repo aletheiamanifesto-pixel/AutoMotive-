@@ -11,6 +11,7 @@ import {
   PlaneGeometry,
   Scene,
   SRGBColorSpace,
+  Vector3,
   WebGLRenderTarget,
   WebGLRenderer,
   type Object3D,
@@ -27,6 +28,8 @@ import { finalPassUv, type DisplayAdapter } from "./display/index.ts";
 export type Character = {
   /** Oggetto 3D del personaggio, centrato nell'origine. */
   readonly object: Object3D;
+  /** Raggio della sfera che contiene il personaggio in ogni posa: serve a inquadrarlo. */
+  readonly boundingRadius: number;
   /** Aggiorna il personaggio: tempo trascorso dall'avvio in secondi. */
   update(timeS: number): void;
   dispose(): void;
@@ -55,8 +58,7 @@ export function createHoloRenderer(options: {
   const scene = new Scene();
   scene.background = new Color(display.background);
   const camera = new PerspectiveCamera(35, 1, 0.1, 100);
-  camera.position.set(0, 0.6, 5);
-  camera.lookAt(0, 0, 0);
+  const viewDirection = new Vector3(0, 0.12, 1).normalize(); // leggermente dall'alto
   scene.add(new HemisphereLight(0xbfe9ff, 0x000000, 1.2));
   const key = new DirectionalLight(0xffffff, 2);
   key.position.set(2, 3, 4);
@@ -81,6 +83,10 @@ export function createHoloRenderer(options: {
     const ratio = renderer.getPixelRatio();
     target.setSize(Math.floor(width * ratio), Math.floor(height * ratio));
     camera.aspect = width / Math.max(height, 1);
+    // Il personaggio deve stare tutto nell'inquadratura, anche su un telefono in verticale.
+    const distance = fitCameraDistance(character.boundingRadius, camera.fov, camera.aspect);
+    camera.position.copy(viewDirection).multiplyScalar(distance);
+    camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
   }
   const observer = new ResizeObserver(resize);
@@ -109,6 +115,21 @@ export function createHoloRenderer(options: {
       renderer.dispose();
     },
   };
+}
+
+/**
+ * Distanza della telecamera perché una sfera di raggio `radius` entri tutta nell'inquadratura,
+ * sia in altezza sia in larghezza. Usa il lato più stretto dello schermo, con un margine.
+ */
+export function fitCameraDistance(
+  radius: number,
+  verticalFovDeg: number,
+  aspect: number,
+  margin = 1.15,
+): number {
+  const vHalf = (verticalFovDeg * Math.PI) / 360;
+  const hHalf = Math.atan(Math.tan(vHalf) * aspect);
+  return (radius * margin) / Math.sin(Math.min(vHalf, hHalf));
 }
 
 /** Materiale "olografico" di default per i personaggi procedurali. */

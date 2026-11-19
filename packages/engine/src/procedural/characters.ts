@@ -1,5 +1,5 @@
 import { Mesh } from "three";
-import { breathe, createBlobGeometry } from "./blob.ts";
+import { BREATH_AMPLITUDE, breathe, createBlobGeometry } from "./blob.ts";
 import { createHoloMaterial, type Character } from "../renderer.ts";
 
 /** Personaggi costruiti interamente dal codice, indicati nel manifest con `"procedural": "<id>"`. */
@@ -15,11 +15,17 @@ export function isProceduralId(id: string): id is ProceduralId {
 
 function createTestBlob(): Character {
   const geometry = createBlobGeometry();
+  geometry.computeBoundingSphere();
+  // Il respiro allunga fino a (1 + ampiezza) in altezza e 1/sqrt(1 - ampiezza) ai lati:
+  // si prende il massimo, così il blob non esce mai dall'inquadratura.
+  const breathGrowth = Math.max(1 + BREATH_AMPLITUDE, 1 / Math.sqrt(1 - BREATH_AMPLITUDE));
+  const boundingRadius = (geometry.boundingSphere?.radius ?? 1) * breathGrowth;
   const material = createHoloMaterial();
   const mesh = new Mesh(geometry, material);
 
   return {
     object: mesh,
+    boundingRadius,
     update(timeS) {
       const pose = breathe(timeS);
       mesh.scale.set(pose.scaleXZ, pose.scaleY, pose.scaleXZ);
