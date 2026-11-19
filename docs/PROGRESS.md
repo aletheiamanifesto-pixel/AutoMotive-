@@ -17,6 +17,10 @@
 - 22 test: display, specchiamento UV, geometria e respiro del blob, parametri del comando, coerenza dei manifest.
 - Verificato nel browser headless: angoli dell'immagine `rgb(0,0,0)`, illuminazione invertita tra `screen` e `pane45` (specchiamento corretto), errore leggibile per un personaggio inesistente.
 
+### Aggiunte dopo la milestone 1
+- `npm run holo -- … --telefono`: il runtime è raggiungibile dagli altri dispositivi sullo stesso Wi-Fi e il terminale mostra un QR code da inquadrare (dipendenza `qrcode-terminal`, 96 kB).
+- Inquadratura automatica (`fitCameraDistance`): la telecamera si allontana quanto serve perché il personaggio entri sia in altezza sia in larghezza. Prima, su un telefono in verticale, il blob usciva dai lati.
+
 ### Decisioni
 - **TypeScript 6.0**, non 7: `typescript-eslint` non supporta ancora la 7.
 - **Specchiamento nel renderer**, non via CSS: resterà valido quando l'immagine verrà catturata per altre uscite (ventola, video).
