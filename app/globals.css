@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/* Tema scuro di default (identità "garage/telemetria"), colori come token */
+@theme {
+  --color-bg: #0b0d10;
+  --color-surface: #14171c;
+  --color-surface-2: #1c2027;
+  --color-border: #2a2f38;
+  --color-fg: #e8eaed;
+  --color-muted: #9aa3ae;
+  --color-accent: #ff5a1f;
+  --color-accent-2: #3ba7ff;
+  --color-good: #34d399;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+}
