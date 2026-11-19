@@ -3,7 +3,6 @@ import Link from "next/link";
 const LINKS = [
   { href: "/vehicles", label: "Veicoli" },
   { href: "/compare", label: "Confronta" },
-  { href: "/pricing", label: "Piani" },
 ] as const;
 
 export function Navbar() {

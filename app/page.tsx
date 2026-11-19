@@ -15,8 +15,7 @@ export default async function HomePage() {
           Studia le auto come un <span className="text-accent">ingegnere</span>.
         </h1>
         <p className="max-w-2xl text-muted">
-          Schede tecniche, confronti ingegneristici e un percorso a livelli che sblocca esperienze reali nel mondo
-          automotive.
+          Schede tecniche, confronti ingegneristici ed esperienze reali nel mondo automotive.
         </p>
         <div className="flex gap-3">
           <Link href="/vehicles" className="rounded-lg bg-accent px-4 py-2 font-medium text-black">

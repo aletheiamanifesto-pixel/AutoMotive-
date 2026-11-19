@@ -8,7 +8,7 @@ import { env } from "@/lib/env";
  * Tre client, tre scopi:
  * - publicClient: chiave anon, nessun cookie → usabile dentro `use cache` per dati pubblici (catalogo).
  * - userClient:   chiave anon + cookie di sessione → le policy RLS vedono l'utente loggato.
- * - adminClient:  service role, bypassa RLS → SOLO webhook Stripe e job server. Mai in componenti.
+ * - adminClient:  service role, bypassa RLS → SOLO job server. Mai in componenti.
  */
 
 function requireSupabase() {
