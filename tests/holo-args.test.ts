@@ -6,7 +6,12 @@ const chars = ["test-blob"];
 
 describe("npm run holo: parametri", () => {
   it("valori predefiniti", () => {
-    expect(parseHoloArgs([], chars)).toEqual({ character: "test-blob", display: "screen", open: true });
+    expect(parseHoloArgs([], chars)).toEqual({
+      character: "test-blob",
+      display: "screen",
+      open: true,
+      phone: false,
+    });
   });
 
   it("forma con spazio e forma con =", () => {
@@ -17,6 +22,11 @@ describe("npm run holo: parametri", () => {
       display: "pane45",
       open: false,
     });
+  });
+
+  it("--telefono rende il runtime raggiungibile dalla rete locale", () => {
+    expect(parseHoloArgs(["--display", "pane45", "--telefono"], chars)).toMatchObject({ phone: true });
+    expect(parseHoloArgs(["--phone"], chars)).toMatchObject({ phone: true });
   });
 
   it("rifiuta un personaggio che non esiste", () => {
