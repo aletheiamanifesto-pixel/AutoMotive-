@@ -19,6 +19,7 @@
 
 ### Aggiunte dopo la milestone 1
 - `npm run holo -- … --telefono`: il runtime è raggiungibile dagli altri dispositivi sullo stesso Wi-Fi e il terminale mostra un QR code da inquadrare (dipendenza `qrcode-terminal`, 96 kB).
+- Il QR code punta all'indirizzo del Wi-Fi vero, non alle schede virtuali di Hyper-V/WSL, VirtualBox o Docker (`scripts/lan.mjs`).
 - Inquadratura automatica (`fitCameraDistance`): la telecamera si allontana quanto serve perché il personaggio entri sia in altezza sia in larghezza. Prima, su un telefono in verticale, il blob usciva dai lati.
 
 ### Decisioni
