@@ -7,6 +7,7 @@ import { existsSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import { createServer } from "vite";
+import qrcode from "qrcode-terminal";
 import { HELP, parseHoloArgs } from "./holo-args.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -31,9 +32,23 @@ const path = `/?character=${encodeURIComponent(args.character)}&display=${encode
 const server = await createServer({
   root: join(root, "apps", "holo"),
   configFile: join(root, "apps", "holo", "vite.config.ts"),
-  server: { open: args.open ? path : false },
+  // host: true → ascolta su tutte le interfacce di rete, così il telefono sullo stesso Wi-Fi lo raggiunge
+  server: { open: args.open ? path : false, host: args.phone },
 });
 await server.listen();
 const url = server.resolvedUrls?.local[0] ?? "http://localhost:5173/";
 console.log(`\n  ◆ AutoMotive holo · personaggio: ${args.character} · display: ${args.display}`);
-console.log(`  ➜ ${new URL(path, url).href}\n  (Ctrl+C per chiudere)\n`);
+console.log(`  ➜ su questo PC:  ${new URL(path, url).href}`);
+
+if (args.phone) {
+  const network = server.resolvedUrls?.network ?? [];
+  if (network.length === 0) {
+    console.log("\n  ⚠ Nessuna rete trovata: il PC è collegato al Wi-Fi?");
+  } else {
+    for (const base of network) console.log(`  ➜ dal telefono: ${new URL(path, base).href}`);
+    console.log("\n  Inquadra il QR code con la fotocamera del telefono (stesso Wi-Fi del PC):\n");
+    qrcode.generate(new URL(path, network[0]).href, { small: true });
+    console.log("  Su Windows, se compare l'avviso del firewall, consenti l'accesso alle reti private.");
+  }
+}
+console.log("\n  (Ctrl+C per chiudere)\n");

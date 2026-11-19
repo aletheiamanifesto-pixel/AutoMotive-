@@ -273,6 +273,12 @@ npm run holo -- --character test-blob --display pane45
 
 Si apre il browser con il blob di prova che respira su fondo nero, specchiato per la teca a 45°.
 Con `--display screen` lo vedi dritto, per lavorarci al monitor. `npm run holo -- --help` elenca le opzioni.
+
+**Dal telefono** (stesso Wi-Fi del PC): aggiungi `--telefono` e inquadra il QR code che compare nel terminale.
+
+```bash
+npm run holo -- --character test-blob --display pane45 --telefono
+```
 Stato del lavoro: [docs/PROGRESS.md](docs/PROGRESS.md).
 
 ## Avvio rapido (obiettivo milestone 2)
