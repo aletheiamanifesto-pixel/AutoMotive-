@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AutoMotive · Holo</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #000;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      #error {
+        position: fixed;
+        inset: 0;
+        display: none;
+        place-items: center;
+        padding: 24px;
+        color: #ff6b6b;
+        font:
+          16px/1.5 system-ui,
+          sans-serif;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="holo"></canvas>
+    <div id="error" role="alert"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

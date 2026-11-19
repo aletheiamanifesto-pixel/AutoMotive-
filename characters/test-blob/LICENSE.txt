@@ -1,0 +1,2 @@
+Personaggio di test generato interamente dal codice (packages/engine/src/procedural/blob.ts).
+Nessun modello, texture o suono esterno. Design originale di AutoMotive.
