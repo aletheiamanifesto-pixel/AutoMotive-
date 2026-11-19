@@ -94,7 +94,7 @@ Lo stesso personaggio, più modi di proiettarlo:
 | Adapter | Hardware |
 |---|---|
 | `pane45` | Teca con lastra a 45° sopra uno schermo (immagine specchiata) — **default** |
-| `pyramid` | Piramide a 4 facce (4 viste a croce) |
+| `pyramid` | Piramide a 4 facce (4 viste a croce) — **scelta per la lampada**, vedi [docs/LAMPADA.md](docs/LAMPADA.md) |
 | `fan` | Ventola LED olografica (uscita video) |
 | `lightfield` | Display light-field (più viste) |
 | `screen` | Monitor normale, per sviluppo |
@@ -326,6 +326,18 @@ npm run holo -- --character dragon-ember --display pane45
 | 13 | Firmware ESP32 touch + LED | Carezza fisica sulla teca |
 | 14 | Bustine fisiche + negozio | Monetizzazione |
 | 15 | Hardware dedicato | Teca con marchio proprio |
+
+### Percorso lampada (in parallelo)
+Il prodotto fisico: una lampada con mini teca, schermo in alto rivolto in basso, piramide a 4 facce, mini computer interno.
+Progetto, decisioni e decisioni aperte in **[docs/LAMPADA.md](docs/LAMPADA.md)**.
+
+| Passo | Cosa | Risultato |
+|---|---|---|
+| L1 | Display `pyramid` (4 viste, schermo sopra/sotto) + bagliore | Prova con telefono e piramide fatta in casa |
+| L2 | Esperimento 0: luce ESP32 collegata a Claude | Primo ciclo AI → oggetto fisico |
+| L3 | Test di prestazioni sul mini computer (4 viste + webcam) | Scelta definitiva dell'hardware |
+| L4 | Prototipo della teca | L'effetto ologramma nella lampada |
+| L5 | Sensi nella lampada (fotocamera, microfono, tocco) | La lampada reagisce dal vivo |
 
 ---
 
