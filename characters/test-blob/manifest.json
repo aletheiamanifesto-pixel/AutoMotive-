@@ -1,0 +1,12 @@
+{
+  "id": "test-blob",
+  "name": "Blob di prova",
+  "rig_family": "blob",
+  "procedural": "test-blob",
+  "scale_cm": 8,
+  "license": {
+    "source": "procedurale (codice di AutoMotive)",
+    "commercial_use": true,
+    "original_design": true
+  }
+}

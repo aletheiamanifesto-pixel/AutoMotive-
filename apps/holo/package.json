@@ -1,0 +1,15 @@
+{
+  "name": "@automotive/holo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Runtime del personaggio olografico",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@automotive/engine": "^0.1.0",
+    "three": "^0.187.0"
+  }
+}
