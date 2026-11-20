@@ -37,7 +37,10 @@
 
 ## Progetto della lampada 📝
 
-Decisioni sul prodotto fisico documentate in [LAMPADA.md](LAMPADA.md): schermo in alto rivolto in basso, piramide a 4 facce con 4 viste diverse, mini teca in plexiglass fumé, mini computer interno, analisi del problema della luce, tre velocità di reazione, esperimento 0 (luce collegata a Claude). Decisioni ancora aperte: §10 di LAMPADA.md.
+Decisioni sul prodotto fisico in [LAMPADA.md](LAMPADA.md).
 
-### Privacy
-- Gli indirizzi di rete reali usati come esempio nei test di `scripts/lan.mjs` sono stati sostituiti con indirizzi di esempio.
+- **MVP: Cubo 18** (18 cm di lato) a **lastra singola** (`pane45`) con **segui-testa** e teca nera con pannello fumé. Obiettivo: sostituire la statuina da collezione sulla mensola, con un personaggio **alto almeno 8 cm**.
+- La piramide a 4 facce resta come inserto alternativo: nel Cubo 18 il personaggio sarebbe di circa 5 cm, sotto il requisito.
+- Percorsi futuri: light-field (vero 3D per più persone) e volumetrico (esperimento con un cubo LED 8×8×8).
+- Esperimento 0: luce e occhi su ESP32-S3 con schermo rotondo, collegati a Claude; corpo della lampada Aukey LT-T6.
+- Decisioni aperte: §12 di LAMPADA.md.

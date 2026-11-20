@@ -6,94 +6,132 @@ Documento di progetto: cosa vogliamo costruire, le decisioni prese, quelle ancor
 
 ---
 
-## 1. L'idea
+## 1. L'idea e l'obiettivo
 
-Una lampada da comodino/scrivania "abitata". Di giorno fa luce; quando è attiva, dentro una piccola teca compare il personaggio 3D, visibile da 4 lati, che **reagisce dal vivo**: ti guarda, risponde alla voce, ai gesti e al tocco.
+Un oggetto da mensola, scrivania o comodino "abitato": dentro una piccola teca scura compare il personaggio 3D, che **si muove e reagisce dal vivo**. Ti guarda, risponde alla voce, ai gesti e al tocco, e quando ti sposti lo vedi da un'altra angolazione.
 
-La parte fondamentale del prodotto è la **reazione dal vivo**, non l'effetto visivo in sé: un personaggio che reagisce è ciò che distingue la lampada da una ventola olografica che riproduce video.
+**Obiettivo di prodotto: prendere il posto della statuina da collezione (tipo Funko POP!) sulla mensola.** Per questo:
+
+- il personaggio deve essere visibile ad **almeno 8 cm di altezza**, la scala di una statuina da collezione (un POP standard è alto circa 9–10 cm);
+- l'oggetto deve restare compatto, intorno ai **18 cm di lato**, e stare bene esposto;
+- rispetto alla statuina ha un vantaggio decisivo: **è vivo**, reagisce e cambia nel tempo.
+
+La parte fondamentale è la **reazione dal vivo**, non l'effetto visivo da solo.
 
 ---
 
-## 2. Com'è fatta
+## 2. La soluzione MVP: Cubo 18 a lastra singola
+
+**Fantasma di Pepper a lastra singola + "segui-testa" con la webcam + teca scura.** È la combinazione migliore tra effetto, costo e reperibilità dei pezzi (confronto in §5).
 
 ```
- ┌───────────────────────────────────┐
- │ ☼ anello LED verso il soffitto    │  luce della lampada (non entra nella teca)
- │ mini computer + ventola           │  il calore sale, lontano dalla teca
- │ altoparlante · microfono          │
- │ schermo rivolto verso il basso ▼  │
- ├────────────────╱╲─────────────────┤  la punta della piramide tocca il centro dello schermo
- │              ╱    ╲               │
- │            ╱  🐉    ╲         📷  │  il personaggio appare dentro la piramide
- │          ╱__________╲             │  fotocamera grandangolare sul fronte
- │   pareti in plexiglass fumé       │
- └───────────────────────────────────┘
- ▀▀▀▀▀▀ base: fondo nero, sensore di tocco, alimentazione ▀▀▀▀▀▀
+   davanti (tu 👀)                         dietro
+   ←──────────────── 18 cm ────────────────→
+   ┌────────────────────────────────┬──────┐ ┐ CAPPELLO ~3 cm
+   │ schermo 8" 4:3 rivolto in giù ▼│      │ ┘ ┐
+   │                       ╱        │ Pi 5 │   │
+   │                     ╱          │ +    │   │
+   │     🐉            ╱            │ventola│  │ TECA ~12,5 cm
+   │  (≥ 8 cm)       ╱  lastra      │      │   │ interno nero opaco
+   │               ╱    a 45°       │ audio│   │ pannello frontale fumé
+   │  📷         ╱                  │      │   │
+   ├────────────────────────────────┴──────┤ ┐ ┘
+   │ ESP32 tocco · LED · alimentazione     │ │ BASE ~2,5 cm
+   └───────────────────────────────────────┘ ┘
 ```
 
 | # | Decisione | Stato | Motivo |
 |---|---|---|---|
-| D1 | **Schermo in alto, rivolto verso il basso** | ✅ | La lampada sta sotto l'altezza degli occhi: con lo schermo in basso lo si vedrebbe acceso guardando dall'alto e l'illusione si romperebbe. In alto è nascosto, la polvere non ci cade sopra e il calore sale lontano dalla teca. |
-| D2 | **Piramide a 4 facce con la punta verso lo schermo** (quindi punta in su, base larga in basso) | ✅ | Regola fisica: la punta guarda sempre lo schermo. Le facce a 45° riflettono l'immagine in orizzontale verso chi guarda. |
-| D3 | **Mini teca**: pareti in plexiglass fumé, fondo nero opaco | ✅ | Vedi §3: il fumé migliora il contrasto di circa 3 volte e permette la visione da 4 lati senza fondo nero dietro. |
-| D4 | **4 viste diverse**, non 4 copie della stessa immagine | ✅ | 4 telecamere virtuali intorno al personaggio (davanti, destra, dietro, sinistra): girando intorno alla lampada si vedono lati diversi. Le viste sono calcolate dal vivo, quindi ogni reazione appare su tutti i lati. |
-| D5 | **Mini computer dentro la lampada**, che fa girare lo stesso software web a tutto schermo | ✅ | Il personaggio è disegnato dal vivo (4 viste) e analizza webcam e microfono: serve un processore grafico, Wi-Fi e un browser. |
-| D6 | Mini computer: **Raspberry Pi 5** (4 GB); piano B Orange Pi 5 | 🟡 | Diffuso, documentato, fotocamera e audio facili da collegare. **Prestazioni da verificare** con 4 viste + webcam prima di comprare il resto. |
-| D7 | **Schermo OLED** (≥ 5,5", luminoso) | 🟡 | Sull'OLED il nero è davvero spento; su un LCD il "nero" si vede come un quadrato grigio nella piramide. |
-| D8 | **ESP32 solo per tocco e luci LED** | ✅ | Un microcontrollore non può fare grafica 3D: fa da "sistema nervoso" per i sensori semplici, non da cervello. |
-| D9 | **Fotocamera grandangolare sul fronte della teca**, rivolta verso la stanza | ✅ | Senza fotocamera niente sguardo né gesti. Le fotocamere di un telefono messo a faccia in giù non vedono l'utente. |
+| D1 | **Schermo in alto, rivolto verso il basso** | ✅ | L'oggetto sta sotto l'altezza degli occhi: con lo schermo in basso lo si vedrebbe acceso guardando dall'alto. In alto è nascosto, la polvere non ci cade sopra. |
+| D2 | **Lastra singola a 45°** (display `pane45`) | ✅ | Il personaggio usa tutto lo schermo: a parità di ingombro è **alto il doppio** rispetto alla piramide (~10 cm contro ~5 cm). Si vede da davanti, come una statuina su una mensola. |
+| D3 | **Personaggio ≥ 8 cm** | ✅ | Requisito per sostituire la statuina da collezione (§1). Impone uno schermo con **profondità della parte accesa ≥ 10 cm** (§3). |
+| D4 | **"Segui-testa"** con la webcam | ✅ | Il motore ridisegna il personaggio dal punto di vista di chi guarda: spostandosi se ne vede il fianco, come un oggetto vero. È l'indizio di 3D più forte ottenibile a costo zero (§5). |
+| D5 | **Teca nera opaca + pannello frontale fumé** | ✅ | Nasconde i bordi della lastra e i riflessi della stanza; il fumé migliora il contrasto (§4). |
+| D6 | **Cubo da 18 cm** di lato | ✅ | Contiene uno schermo 8" 4:3 con un personaggio fino a ~10 cm; compatto da mensola. |
+| D7 | **Mini computer dentro**, nel vano posteriore | ✅ | Il personaggio è disegnato dal vivo e la webcam va analizzata: serve un processore grafico, Wi-Fi e un browser. Dietro la lastra fa anche da parete nera; il calore sale lungo il retro. |
+| D8 | Mini computer: **Raspberry Pi 5** (4 GB); piano B Orange Pi 5 | 🟡 | Diffuso e documentato. **Prestazioni da verificare** con personaggio + segui-testa. |
+| D9 | Schermo: **8" 4:3 HDMI ad alta luminosità** (OLED se reperibile in questo formato) | 🟡 | Il 4:3 è più "quadrato" e riempie meglio il cubo; la profondità di ~12 cm soddisfa D3. |
+| D10 | **ESP32 per tocco e luci** | ✅ | Un microcontrollore non fa grafica 3D: fa da sistema nervoso per i sensori semplici. |
+| D11 | **Fotocamera grandangolare sul fronte** | ✅ | Serve sia al segui-testa sia alle reazioni (sguardo, gesti). |
 
-### Scartato
+### Alternative e scartati
 | Opzione | Stato | Perché |
 |---|---|---|
-| Schermo in basso con piramide sopra (come i video con il telefono) | ❌ per il prodotto (✔ per le prove) | Da in piedi si vede lo schermo acceso; polvere sullo schermo. Resta comodo per le prove con il telefono. |
-| Ventola LED olografica | ❌ | Rumorosa, pale pericolose, si vede solo da davanti, di solito riproduce video preparati e non un personaggio dal vivo. |
-| Vecchio telefono come cervello della lampada | ❌ per l'MVP | Le fotocamere non vedono l'utente; via Wi-Fi il browser blocca fotocamera e microfono (indirizzo non sicuro); si scalda e va in standby. |
+| Piramide a 4 facce (display `pyramid`) | 🟡 come **inserto alternativo** | Si vede da 4 lati ma il personaggio è piccolo (~5 cm nel Cubo 18, sotto il requisito D3). Lo stesso cubo può ospitare un inserto "piramide" intercambiabile, per le demo. |
+| Schermo 7" 16:9 | ❌ | Profondità ~8,6 cm → personaggio ~7 cm, sotto il requisito D3. |
+| Ventola LED olografica | ❌ | Rumorosa, pale pericolose, immagine piatta e solo frontale, di solito riproduce video preparati. |
+| Vecchio telefono come cervello | ❌ per l'MVP | Le fotocamere non vedono l'utente; via Wi-Fi il browser blocca fotocamera e microfono; si scalda e va in standby. |
 | Solo un microchip (ESP32) | ❌ | Non sa disegnare in 3D. |
-| Promettere l'effetto "alieno nella stanza illuminata" delle pubblicità | ❌ | Non è realizzabile con queste tecnologie: sarebbe pubblicità ingannevole. Tutti questi sistemi sono illusioni ottiche con immagini piatte. |
+| Volumetrico come MVP | ❌ per l'MVP | Progetto di ricerca lungo; resta come esperimento (§10). |
+| Promettere l'effetto "alieno nella stanza illuminata" delle pubblicità | ❌ | Non è realizzabile con queste tecnologie: sarebbe pubblicità ingannevole. |
 
 ---
 
-## 3. Il problema della luce
+## 3. Misure del Cubo 18
 
-Un vetro o plexiglass trasparente riflette circa il **4% della luce per superficie**: il personaggio riflesso è debole, mentre la luce della stanza dietro la piramide passa e si somma all'immagine. L'illusione dipende dal rapporto **luce riflessa del personaggio / luce di sfondo**.
+**Regola della lastra singola:** il personaggio può essere alto quanto la **profondità** della parte accesa dello schermo (la dimensione da davanti a dietro), in pratica circa l'80% per lasciare margine ai movimenti. Per ≥ 8 cm servono quindi **≥ 10 cm di profondità**.
+
+| Pezzo | Misura (indicativa, da ricontrollare sullo schermo comprato) |
+|---|---|
+| Cubo esterno | **18 × 18 × 18 cm** |
+| Parte accesa dello schermo 8" 4:3 | circa 16,3 cm (larghezza) × 12,2 cm (profondità) |
+| Lastra (plexiglass 1 mm o pellicola semiriflettente) | **16,5 × 17,3 cm** (17,3 = profondità × 1,414), inclinata a 45°: bordo alto **dietro**, sotto il bordo posteriore dello schermo; bordo basso **davanti** |
+| Cappello (schermo + LED) | ~3 cm |
+| Teca | ~12,5 cm di altezza |
+| Base (ESP32, LED, alimentazione) | ~2,5 cm |
+| Vano posteriore (Raspberry Pi 5, audio) | ~4,5 cm di profondità, per tutta l'altezza |
+| **Personaggio visibile** | **fino a ~10 cm** di altezza e ~14 cm di larghezza |
+
+| Formato | Schermo | Ingombro | Personaggio | Requisito ≥ 8 cm |
+|---|---|---|---|---|
+| **Lastra singola** ✅ | **8" 4:3** | **cubo 18 cm** | **~10 cm** | ✅ |
+| Lastra singola | 10,1" 16:10 | cubo 24 cm | ~11–12 cm | ✅ ma ingombrante |
+| Lastra singola | 7" 16:9 | 17 × 13 × 12 cm | ~7 cm | ❌ |
+| Piramide (inserto) | 8" 4:3 | cubo 18 cm | ~5 cm | ❌ |
+
+**Stampa 3D:** cappello, telaio con le scanalature per lastra e pannelli, base e vano posteriore in PLA/PETG **nero opaco**; pezzi non più grandi di 18 cm per entrare nelle stampanti comuni; fessure d'aria sul vano del computer; fori per alimentazione e fotocamera. Lastra e pannello fumé **non** si stampano: si tagliano da fogli di plexiglass o pellicola.
+
+---
+
+## 4. Il problema della luce
+
+Un vetro o plexiglass trasparente riflette circa il **4% della luce per superficie**: il personaggio riflesso è debole, mentre la luce della stanza dietro la lastra passa e si somma all'immagine. L'illusione dipende dal rapporto **luce riflessa del personaggio / luce di sfondo**.
 
 | Problema | Effetto | Soluzione |
 |---|---|---|
-| Riflesso debole (~4%) | personaggio pallido | schermo luminoso (≥ 800–1000 nit) e/o **pellicola semiriflettente** (beam splitter), che riflette 5–10 volte di più |
-| Sfondo chiaro dietro la piramide | personaggio invisibile | **plexiglass fumé** (vedi sotto) e fondo nero |
-| Il nero dell'LCD non è nero | quadrato grigio nella piramide | **schermo OLED** |
-| Immagine doppia | personaggio sdoppiato | plexiglass sottile (1 mm) o pellicola su un solo lato |
-| Luce della lampada stessa | ologramma "lavato via" | luce rivolta verso il soffitto; si abbassa in modalità ologramma |
-| Colori scuri del personaggio | **le parti scure diventano invisibili** (il nero è trasparente) | regola di design §6 |
-| Facce di luminosità diversa | 2 lati più deboli | dipende dalla polarizzazione dello schermo: da verificare con una prova |
+| Riflesso debole (~4%) | personaggio pallido | schermo luminoso e/o **pellicola semiriflettente** (beam splitter, tipo teleprompter), che riflette 5–10 volte di più |
+| Sfondo chiaro dietro la lastra | personaggio invisibile | interno **nero opaco** |
+| Riflessi della stanza sul vetro | si vede "un vetro" | pannello frontale **fumé**, bordi della lastra nascosti nel telaio |
+| Il nero dell'LCD non è nero | rettangolo grigio visibile | schermo **OLED** se reperibile; altrimenti pellicola semiriflettente + fumé |
+| Immagine doppia | personaggio sdoppiato | lastra sottile (1 mm) o pellicola su un solo lato |
+| Luce della lampada stessa | ologramma "lavato via" | luci LED rivolte verso l'esterno, mai dentro la teca |
+| Colori scuri del personaggio | **le parti scure diventano invisibili** | regola di design §7 |
 
-**Perché il fumé funziona.** Con pareti che lasciano passare il 30% della luce: l'immagine attraversa una parete (arriva il 30%), lo sfondo ne attraversa due (arriva il 9%). Il contrasto migliora di circa 3 volte.
+**Perché il fumé funziona.** Con un pannello che lascia passare il 30% della luce, l'immagine del personaggio lo attraversa una volta, mentre i riflessi della stanza sul vetro lo attraversano due volte (entrando e uscendo): il contrasto migliora di circa 3 volte.
 
-**Aiuti software:** bagliore (glow) attorno al personaggio; colori chiari di default; luminosità regolata in automatico in base alla luce della stanza, usando la webcam come sensore.
-
----
-
-## 4. Le 4 viste sullo schermo
-
-Le viste stanno a croce intorno al centro, dove poggia la punta della piramide; ognuna è girata verso la faccia che la riflette e specchiata (il vetro la ribalta).
-
-```
-              [ vista da dietro ]
- [ da sinistra ]       ·        [ da destra ]
-              [ vista da davanti ]
-```
-
-- Schermo **in alto** (lampada): testa del personaggio verso il centro, piedi verso l'esterno.
-- Schermo **in basso** (prove col telefono): piedi verso il centro, testa verso l'esterno.
-
-Nel software diventa il display adapter `pyramid` con l'opzione di montaggio (schermo sopra/sotto).
-
-**Piramide fatta in casa per le prove con un telefono:** 4 trapezi ritagliati dalla custodia di un CD: lato lungo 6 cm, lato corto 1 cm, altezza 3,5 cm, uniti con lo scotch (facce a circa 45°).
+**Aiuti software:** bagliore (glow) attorno al personaggio; colori chiari di default; luminosità regolata in base alla luce della stanza, usando la webcam come sensore.
 
 ---
 
-## 5. La reazione dal vivo
+## 5. L'effetto 3D: cosa si ottiene e cosa no
+
+Tutti i sistemi a riflessione (lastra, piramide) mostrano **immagini piatte**: la piramide non è "più 3D" della lastra, mostra solo 4 viste piatte. Il cervello percepisce il 3D da diversi indizi:
+
+| Indizio | Lastra singola | Piramide | **Lastra + segui-testa** (MVP) | Light-field |
+|---|---|---|---|---|
+| Fluttua nello spazio (l'occhio mette a fuoco "dentro" la scatola) | ✅ | ✅ | ✅ | ✅ |
+| Ombre, luci, prospettiva | ✅ | ✅ | ✅ | ✅ |
+| Ti guarda e reagisce | ✅ | ✅ | ✅ | ✅ |
+| Muovendo la testa vedi un altro lato | ❌ | a scatti (4 lati) | ✅ fluido, **1 persona alla volta** | ✅ più persone |
+| Ogni occhio vede un'immagine diversa (stereo) | ❌ | ❌ | ❌ | ✅ senza occhiali |
+
+**Segui-testa.** La webcam stima la posizione degli occhi di chi guarda; il motore sposta la telecamera virtuale di conseguenza, molte volte al secondo. Due movimenti si sommano: il personaggio si muove per conto suo (animazioni e reazioni) e il punto di vista cambia quando ti sposti.
+
+**Limiti:** l'effetto pieno è per una persona alla volta (chi è accanto vede il personaggio sospeso, senza cambio di prospettiva); il personaggio resta dentro la teca; avanti/indietro è reso con dimensione e prospettiva, perché l'immagine riflessa sta su un piano.
+
+---
+
+## 6. La reazione dal vivo
 
 Il personaggio ripete di continuo il ciclo **sente → decide → agisce**. Il cervello ha tre velocità:
 
@@ -108,84 +146,93 @@ Il personaggio ripete di continuo il ciclo **sente → decide → agisce**. Il c
 | Tu fai… | Lui… | Senso |
 |---|---|---|
 | entri nella stanza | si sveglia, ti guarda | webcam (viso) |
-| ti sposti | ti segue con lo sguardo | webcam (posizione del viso) |
+| ti sposti | ti segue con lo sguardo; il punto di vista cambia | webcam (posizione del viso) |
 | saluti | ricambia | webcam (gesto) |
-| muovi la mano piano vicino a lui | fa le fusa ("carezza nell'aria") | webcam (mano aperta e lenta) |
-| tocchi la lampada | reagisce al tocco | sensore sulla teca (ESP32) |
+| muovi la mano piano davanti alla teca | fa le fusa ("carezza nell'aria") | webcam (mano aperta e lenta) |
+| tocchi l'oggetto | reagisce al tocco | sensore (ESP32) |
 | batti le mani | sobbalza | microfono (volume) |
 | dici "fuoco!" | mossa speciale | microfono (parola chiave) |
 | lo ignori a lungo | sbadiglia, dorme | timer + umore |
 | torni dopo ore | fa festa | memoria |
 
-**Dove avviene cosa.** Nella lampada, anche senza internet: disegno 3D, riflessi, umore, analisi di immagini e suoni. Le immagini della webcam **non escono mai** dalla lampada. Su internet: solo l'LLM (riceve eventi testuali, mai immagini) e la collezione. Senza Wi-Fi il personaggio continua a vivere e reagire.
-
-**Proposta 🟡 — reazioni prima del personaggio vero.** Costruire subito riflessi e umore con il blob di prova (sguardo, carezza, spavento, sonno, risveglio) più un pannello che mostra cosa "sente". Il personaggio di Meshy, quando arriva, eredita le reazioni. Comporta anticipare parte delle milestone 3–5 nella roadmap.
+**Dove avviene cosa.** Nell'oggetto, anche senza internet: disegno 3D, segui-testa, riflessi, umore, analisi di immagini e suoni. Le immagini della webcam **non escono mai** dall'oggetto. Su internet: solo l'LLM (riceve eventi testuali, mai immagini) e la collezione.
 
 ---
 
-## 6. Regole di design dei personaggi (per la lampada)
+## 7. Regole di design dei personaggi
 
-- **Colori chiari, saturi, luminosi.** Le parti scure o nere diventano invisibili: un personaggio nero sparisce.
-- **Silhouette leggibile** da tutti e 4 i lati.
-- **Dimensione** adatta alla piramide: il personaggio deve stare tutto in una vista (l'inquadratura automatica del motore lo garantisce).
+- **Alto almeno 8 cm in teca** e completamente visibile anche mentre si muove: il motore lo inquadra automaticamente.
+- **Colori chiari, saturi, luminosi.** Le parti scure o nere diventano invisibili.
+- **Silhouette leggibile** di fronte e di tre quarti (con il segui-testa si vede anche il fianco).
 - Restano valide le regole del README: design originale, licenza commerciale, ≤ 50k triangoli.
 
 ---
 
-## 7. Componenti del prototipo (MVP) 🟡
+## 8. Componenti del prototipo 🟡
 
 | Pezzo | Scelta | Costo indicativo* |
 |---|---|---|
-| Mini computer | Raspberry Pi 5 (4 GB) + dissipatore/ventola + scheda di memoria | 90 € |
-| Alimentazione | alimentatore USB-C 27 W | 15 € |
-| Schermo | OLED 5,5" HDMI | 70–100 € |
+| Lastra | pellicola o vetro semiriflettente (per la prima prova: plexiglass trasparente 1 mm) | 10–30 € |
+| Teca | Cubo 18 stampato in 3D, interno nero opaco + pannello frontale fumé | 15–25 € |
+| Schermo | 8" 4:3 HDMI ad alta luminosità | 60–90 € |
+| Mini computer | Raspberry Pi 5 (4 GB) + ventola + alimentatore USB-C 27 W | ~105 € |
 | Fotocamera | Camera Module 3 Wide | 35–45 € |
-| Audio | microfono USB + altoparlante con amplificatore | 20 € |
-| Piramide e teca | pellicola semiriflettente, plexiglass fumé, telaio stampato in 3D o in legno | 30–50 € |
-| Tocco e luci | ESP32-S3 + anello LED WS2812B | 15 € |
-| **Totale** | | **circa 280–330 €** |
+| Audio | microfono USB + altoparlante con amplificatore | ~20 € |
+| Tocco e luci | ESP32-S3 + anello LED | ~15 € |
+| **Totale** | | **circa 260–330 €** |
 
-\*Prezzi orientativi per un pezzo singolo, da verificare all'acquisto. Possibile acquisto in due tappe: prima Pi 5 + schermo (test di prestazioni e luce), poi il resto.
+\*Prezzi orientativi per un pezzo singolo, da verificare all'acquisto.
 
 ---
 
-## 8. Esperimento 0: la luce collegata a Claude 🟡
+## 9. Esperimento 0: la luce collegata a Claude 🟡
 
 Lo stesso ciclo del personaggio in versione minima: **succede qualcosa → l'AI decide → comando preciso → un oggetto fisico reagisce.**
 
 ```
-Tu scrivi a Claude Code → Claude risponde → hook sul PC → Wi-Fi → ESP32 → 💡
+Tu scrivi a Claude Code → Claude risponde → hook sul PC → Wi-Fi → ESP32 → 💡 (+ occhi sullo schermo rotondo)
 ```
 
 - **Versione 1 (hook di Claude Code):** luce soffusa che "respira" mentre Claude lavora; un lampo quando ha finito.
-- **Versione 2 (API di Claude):** Claude sceglie colore ed effetto in base al tono della risposta, solo tra quelli previsti (`{"luce": "blu", "effetto": "pulsa"}`): è il vocabolario di azioni del README in miniatura.
+- **Versione 2 (API di Claude):** Claude sceglie colore ed effetto solo tra quelli previsti (`{"luce": "blu", "effetto": "pulsa"}`): il vocabolario di azioni del README in miniatura.
 
-**Hardware:** ESP32-S3 DevKitC-1 (ha già un LED colorato a bordo), anello LED WS2812B da 16 LED, 3 cavi dupont femmina-femmina, cavo USB-C dati. Circa 15–20 €. La lampada Aukey disponibile si comanda solo al tocco, quindi non è collegabile.
+**Scheda scelta:** ESP32-S3 con schermo rotondo IPS da 1,28" (Waveshare ESP32-S3-LCD-1.28). Sullo schermo: due occhi che si muovono, "pensano" mentre Claude elabora, sorridono quando ha finito, dormono a lampada spenta. Preferire la versione **senza** touch (32 piedini disponibili, passo 1,27 mm) a quella touch (6 piedini su connettore SH1.0).
 
-**Cosa verifica:** il collegamento AI → oggetto fisico (milestone 5), l'ESP32 con le luci della base (milestone 13) e i tempi di risposta dell'LLM.
+**Corpo della lampada:** Aukey LT-T6 (si comanda solo al tocco, alimentatore esterno a bassa tensione). Modifica proposta: sostituire l'elettronica originale con ESP32 + anello LED **SK6812 RGBW** (bianco caldo vero), collegando la base metallica a sfioramento a un piedino touch dell'ESP32. Da verificare: tensione di uscita dell'alimentatore (se 12 V serve un riduttore a 5 V) e foto dell'interno. Alimentatore da ~6 W: luminosità dei LED da limitare nel firmware.
 
 ---
 
-## 9. Percorso di prova
+## 10. Percorsi futuri
 
-| Passo | Cosa | Serve |
+| Percorso | Cosa | Stato |
 |---|---|---|
-| 1 | Display `pyramid` (4 viste, schermo sopra/sotto) + bagliore | software |
-| 2 | Prova della luce in casa: telefono + piramide di CD; luce accesa/spenta, fondo bianco/nero, foglio fumé | telefono, custodia CD |
-| 3 | Esperimento 0: luce collegata a Claude | ESP32 + anello LED |
-| 4 | Test di prestazioni sul Raspberry Pi 5: 4 viste + webcam | Pi 5 + schermo |
-| 5 | Prototipo della teca: schermo in alto, piramide, fumé, fondo nero | componenti §7 |
-| 6 | Sensi nella lampada: fotocamera, microfono, tocco | componenti §7 |
+| **Light-field** | Sostituire la lastra con uno schermo light-field (es. Looking Glass Go, 6", listino 299 $): vero 3D stereo per più persone, senza occhiali. Nel software cambia solo il display adapter. Compatibilità del modello Go con la libreria WebXR/Three.js **da verificare**. | aggiornamento "premium" |
+| **Volumetrico** | Punti di luce davvero nello spazio, visibili da ogni lato. Esperimento a basso costo: **cubo LED 8×8×8** pilotato dall'ESP32 (personaggio a "pixel grossi"). Salto di qualità: pannello di LED rotante (meccanica impegnativa). Nel software: adapter `volume` che voxelizza il personaggio. | esperimento parallelo |
+| **Piramide** | Inserto intercambiabile nel Cubo 18 per demo a 4 lati. | opzione |
 
 ---
 
-## 10. Decisioni aperte
+## 11. Percorso di prova
+
+Prima si verifica l'effetto spendendo poco, poi si compra.
+
+| Passo | Cosa | Costo | Serve |
+|---|---|---|---|
+| 1 | **Segui-testa** con il blob in `pane45`, sul PC: prima dritto, poi con un foglio di plexiglass a 45° davanti a monitor o tablet | ~10 € | software + webcam del PC |
+| 2 | Esperimento 0: luce e occhi collegati a Claude | ~20–40 € | ESP32 + anello LED |
+| 3 | Test di prestazioni sul Raspberry Pi 5: personaggio + segui-testa | ~170 € | Pi 5 + schermo 8" |
+| 4 | Stampa e montaggio del Cubo 18 | ~40 € | stampante 3D, plexiglass |
+| 5 | Sensi nell'oggetto: fotocamera, microfono, tocco | ~70 € | componenti §8 |
+
+---
+
+## 12. Decisioni aperte
 
 | # | Domanda | Opzioni | Consiglio |
 |---|---|---|---|
-| A1 | Mini computer | Raspberry Pi 5 / Orange Pi 5 | Pi 5, dopo il test di prestazioni |
-| A2 | Budget del prototipo | ~300 € in una volta / due tappe | da decidere |
+| A1 | Mini computer | Raspberry Pi 5 / Orange Pi 5 | Pi 5, dopo il test di prestazioni (passo 3) |
+| A2 | Schermo esatto | modello 8" 4:3 da scegliere (OLED se esiste) | il più luminoso con profondità della parte accesa ≥ 10 cm |
 | A3 | Riconoscimento vocale | sul dispositivo (es. Vosk, solo parole chiave) / Web Speech API di Chrome | **sul dispositivo**: quello di Chrome invia l'audio ai server di Google, in contrasto con la regola "microfono elaborato in locale" di CLAUDE.md |
-| A4 | Ordine della roadmap | reazioni con il blob prima del personaggio vero / ordine attuale | reazioni prima (§5) |
-| A5 | Seguire chi gira intorno alla lampada | una fotocamera frontale / più fotocamere o grandangolo | una frontale per l'MVP |
-| A6 | Dove tenere l'esperimento 0 | `firmware/` di questo repo / progetto separato | `firmware/` |
+| A4 | Ordine della roadmap | reazioni e segui-testa con il blob prima del personaggio vero / ordine attuale | reazioni prima |
+| A5 | Dove tenere l'esperimento 0 | `firmware/` di questo repo / progetto separato | `firmware/` |
+| A6 | Stampante 3D | modello e area di stampa da conoscere | serve per dividere i pezzi del Cubo 18 |

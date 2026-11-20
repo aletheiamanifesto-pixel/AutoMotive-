@@ -94,7 +94,7 @@ Lo stesso personaggio, più modi di proiettarlo:
 | Adapter | Hardware |
 |---|---|
 | `pane45` | Teca con lastra a 45° sopra uno schermo (immagine specchiata) — **default** |
-| `pyramid` | Piramide a 4 facce (4 viste a croce) — **scelta per la lampada**, vedi [docs/LAMPADA.md](docs/LAMPADA.md) |
+| `pyramid` | Piramide a 4 facce (4 viste a croce) — inserto alternativo per demo a 4 lati |
 | `fan` | Ventola LED olografica (uscita video) |
 | `lightfield` | Display light-field (più viste) |
 | `screen` | Monitor normale, per sviluppo |
@@ -328,11 +328,18 @@ npm run holo -- --character dragon-ember --display pane45
 | 15 | Hardware dedicato | Teca con marchio proprio |
 
 ### Percorso lampada (in parallelo)
-Il prodotto fisico: una lampada con mini teca, schermo in alto rivolto in basso, piramide a 4 facce, mini computer interno.
-Progetto, decisioni e decisioni aperte in **[docs/LAMPADA.md](docs/LAMPADA.md)**.
+Il prodotto fisico: il **Cubo 18**, un oggetto da mensola da 18 cm di lato che prende il posto della statuina da collezione (tipo Funko POP!). Dentro, un personaggio **alto almeno 8 cm** che si muove e reagisce dal vivo: schermo 8" in alto rivolto in basso, lastra singola a 45° (`pane45`), **segui-testa** con la webcam, teca nera con pannello fumé, mini computer interno.
+Progetto, misure, decisioni e decisioni aperte in **[docs/LAMPADA.md](docs/LAMPADA.md)**.
 
 | Passo | Cosa | Risultato |
 |---|---|---|
+| L1 | Segui-testa con il blob in `pane45` (webcam del PC) | Verifica dell'effetto 3D spendendo ~10 € |
+| L2 | Esperimento 0: luce e occhi (ESP32 con schermo rotondo) collegati a Claude | Primo ciclo AI → oggetto fisico |
+| L3 | Test di prestazioni sul Raspberry Pi 5 (personaggio + segui-testa) | Scelta definitiva dell'hardware |
+| L4 | Stampa e montaggio del Cubo 18 | L'effetto ologramma nell'oggetto |
+| L5 | Sensi nell'oggetto (fotocamera, microfono, tocco) | Reagisce dal vivo |
+
+---|---|---|
 | L1 | Display `pyramid` (4 viste, schermo sopra/sotto) + bagliore | Prova con telefono e piramide fatta in casa |
 | L2 | Esperimento 0: luce ESP32 collegata a Claude | Primo ciclo AI → oggetto fisico |
 | L3 | Test di prestazioni sul mini computer (4 viste + webcam) | Scelta definitiva dell'hardware |
