@@ -34,3 +34,10 @@
 - Milestone 2: `packages/pack-schema`, `packages/actions`, `apps/playground`, caricamento dei modelli `.glb` (serve il primo personaggio con scheletro e animazioni + suoni).
 - Il bundle di `apps/holo` pesa ~500 kB (Three.js): da dividere quando si aggiungono loader ed effetti.
 - Playwright non ancora configurato: per CLAUDE.md serve solo ai flussi della PWA (milestone 7).
+
+## Progetto della lampada 📝
+
+Decisioni sul prodotto fisico documentate in [LAMPADA.md](LAMPADA.md): schermo in alto rivolto in basso, piramide a 4 facce con 4 viste diverse, mini teca in plexiglass fumé, mini computer interno, analisi del problema della luce, tre velocità di reazione, esperimento 0 (luce collegata a Claude). Decisioni ancora aperte: §10 di LAMPADA.md.
+
+### Privacy
+- Gli indirizzi di rete reali usati come esempio nei test di `scripts/lan.mjs` sono stati sostituiti con indirizzi di esempio.
